@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperTownDefense", "SuperTownDefense\SuperTownDefense\SuperTownDefense.csproj", "{E189F840-816B-4547-A756-E5ABA8070998}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "SuperTownDefenseContent", "SuperTownDefense\SuperTownDefenseContent\SuperTownDefenseContent.contentproj", "{991F4D7D-37E2-4377-A922-545D50B65207}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityEngine", "..\EntityEngine\EntityEngine\EntityEngine.csproj", "{9F346BBB-6E03-4A1F-B3E8-7901DC6C9C2C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E189F840-816B-4547-A756-E5ABA8070998}.Debug|x86.ActiveCfg = Debug|x86
+		{E189F840-816B-4547-A756-E5ABA8070998}.Debug|x86.Build.0 = Debug|x86
+		{E189F840-816B-4547-A756-E5ABA8070998}.Release|x86.ActiveCfg = Release|x86
+		{E189F840-816B-4547-A756-E5ABA8070998}.Release|x86.Build.0 = Release|x86
+		{991F4D7D-37E2-4377-A922-545D50B65207}.Debug|x86.ActiveCfg = Debug|x86
+		{991F4D7D-37E2-4377-A922-545D50B65207}.Release|x86.ActiveCfg = Release|x86
+		{9F346BBB-6E03-4A1F-B3E8-7901DC6C9C2C}.Debug|x86.ActiveCfg = Debug|x86
+		{9F346BBB-6E03-4A1F-B3E8-7901DC6C9C2C}.Debug|x86.Build.0 = Debug|x86
+		{9F346BBB-6E03-4A1F-B3E8-7901DC6C9C2C}.Release|x86.ActiveCfg = Release|x86
+		{9F346BBB-6E03-4A1F-B3E8-7901DC6C9C2C}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
