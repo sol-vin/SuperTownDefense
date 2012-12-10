@@ -12,12 +12,12 @@ using SuperTownDefense.Objects;
 
 namespace SuperTownDefense
 {
-    public class Solider : Entity
+    public class Soldier : Entity
     {
         Random _rand = new Random(DateTime.Now.Millisecond);
         private Animation _soldieranim;
         private GibEmitter _ge;
-        public Solider(EntityState es) : base(es)
+        public Soldier(EntityState es) : base(es)
         {
             Body = new Body(this, Vector2.Zero);
             Components.Add(Body);
@@ -29,7 +29,7 @@ namespace SuperTownDefense
             _soldieranim.Start();
             Components.Add(Render);
 
-            Body.Position.Y = 500;
+            Body.Position.Y = 520 -  _rand.Next(-10,10);
             Body.Position.X = (Render.Flip == SpriteEffects.None) ? es.GameRef.Viewport.Right + 10 : -10;
 
             Collision = new Collision(this);
@@ -46,6 +46,26 @@ namespace SuperTownDefense
         public override void Update()
         {
             base.Update();
+            //Stop the soldier at a point around the city.
+            float leftstop = StateRef.GameRef.Viewport.Width/2 - 60 - _rand.Next(0, 40);
+            float rightstop = StateRef.GameRef.Viewport.Width / 2 + 60 + _rand.Next(0, 40);
+
+            //If we are facing left
+            if (Render.Flip == SpriteEffects.None)
+            {
+                if (Body.Position.X < rightstop)
+                {
+                    Physics.Velocity = Vector2.Zero;
+                }
+            }
+            //If we are facing right
+            else
+            {
+                if (Body.Position.X > leftstop)
+                {
+                    Physics.Velocity = Vector2.Zero;
+                }
+            }
         }
 
         public override void Destroy(Entity e = null)

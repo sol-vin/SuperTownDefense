@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using EntityEngine.Engine;
 using EntityEngine.GUI;
+using EntityEngine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SuperTownDefense.Objects;
 
 namespace SuperTownDefense
@@ -15,8 +17,9 @@ namespace SuperTownDefense
         private Image _bgimage;
         private Town _town;
         private bool _alreadystarted;
-        private Solider _s;
-
+        private Soldier _s;
+        private DoubleInput _restartkey = new DoubleInput(Keys.Escape, Buttons.Start, PlayerIndex.One);
+        private EnemySpawner _es;
         public GameState(SuperTownGame game) : base(game, "game")
         {
             
@@ -38,10 +41,10 @@ namespace SuperTownDefense
             _town = new Town(this);
             AddEntity(_town);
 
-            _s = new Solider(this);
-            AddEntity(_s);
+            _es = new EnemySpawner(this);
+            AddEntity(_es);
 
-            _town.Collision.AddPartner(_s);
+            _town.Collision.NewPartners = _es.Enemies;
         }
 
         public override void Reset()
@@ -59,6 +62,11 @@ namespace SuperTownDefense
         public override void Update()
         {
             base.Update();
+            if (_restartkey.Pressed())
+            {
+                Reset();
+                Start();
+            }
         }
     }
 }
