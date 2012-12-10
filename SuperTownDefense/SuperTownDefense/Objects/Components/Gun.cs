@@ -16,6 +16,7 @@ namespace SuperTownDefense.Objects.Components
         public void Fire(float angle)
         {
             Bomb b = new Bomb(Entity.StateRef, Entity.Body.Position + Entity.Render.Origin * Entity.Render.Scale, angle);
+            b.Collision.NewPartners = Entity.Collision.Partners;
             Entity.AddEntity(b);
         }
     }

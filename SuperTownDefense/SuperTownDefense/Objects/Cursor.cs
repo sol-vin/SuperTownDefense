@@ -28,7 +28,7 @@ namespace SuperTownDefense.Objects
 
             _aimleftkey = new DoubleInput(Keys.A, Buttons.DPadLeft, PlayerIndex.One);
             _aimrightkey = new DoubleInput(Keys.D, Buttons.DPadRight, PlayerIndex.One);
-            _quickaimkey = new DoubleInput(Keys.W, Buttons.RightShoulder, PlayerIndex.One);
+            _quickaimkey = new DoubleInput(Keys.LeftShift, Buttons.RightShoulder, PlayerIndex.One);
 
             Physics = new Physics(this);
             Components.Add(Physics);
@@ -42,6 +42,8 @@ namespace SuperTownDefense.Objects
 
             Body = new Body(this, town.Body.Position + (town.Render.Origin - Vector2.UnitY * 40 - Render.Origin) * Render.Scale, Vector2.One * 5);
             Components.Add(Body);
+
+            Town.Health.DiedEvent += Destroy;
         }
 
         public override void Update()
@@ -60,9 +62,15 @@ namespace SuperTownDefense.Objects
                 Angle = -AngleConstrant;
 
             if (Math.Abs(Angle) <= 0.055)
+            {
                 Render.Color = Color.Red;
+                Body.Angle = MathHelper.PiOver2/2;
+            }
             else
-                Render.Color = Color.White;
+            {
+                Render.Color = Color.SteelBlue;
+                Body.Angle = 0; 
+            }
             
 
             var origin = Town.Body.Position + Town.Render.Origin * Town.Render.Scale;
@@ -72,6 +80,11 @@ namespace SuperTownDefense.Objects
                 (float)(Math.Cos(Angle) * (unrotatedposition.X - origin.X) - Math.Sin(Angle) * (unrotatedposition.Y - origin.Y) + origin.X),
                 (float)(Math.Sin(Angle) * (unrotatedposition.X - origin.X) + Math.Cos(Angle) * (unrotatedposition.Y - origin.Y) + origin.Y)
             );
+        }
+
+        public override void Destroy(Entity e = null)
+        {
+            base.Destroy(e);
         }
     }
 }

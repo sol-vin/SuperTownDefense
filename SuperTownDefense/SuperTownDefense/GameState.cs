@@ -15,6 +15,7 @@ namespace SuperTownDefense
         private Image _bgimage;
         private Town _town;
         private bool _alreadystarted;
+        private Solider _s;
 
         public GameState(SuperTownGame game) : base(game, "game")
         {
@@ -36,6 +37,11 @@ namespace SuperTownDefense
 
             _town = new Town(this);
             AddEntity(_town);
+
+            _s = new Solider(this);
+            AddEntity(_s);
+
+            _town.Collision.AddPartner(_s);
         }
 
         public override void Reset()
