@@ -7,6 +7,7 @@ using EntityEngine.Data;
 using EntityEngine.Engine;
 using EntityEngine.Objects;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace SuperTownDefense.Objects
@@ -17,14 +18,18 @@ namespace SuperTownDefense.Objects
         private Animation _explodeanim;
         private bool _isexploding;
         private ExplosionEmitter _ee;
+        private SmokeEmitter _se;
+        private Sound _explodesound;
 
-        public Bomb(EntityState es, Vector2 position, float angle) : base(es)
+        public float Damage = 1;
+
+        public Bomb(EntityState es, Vector2 position, float angle, float thrust) : base(es)
         {
             Body = new Body(this, position) {Angle = angle};
             Components.Add(Body);
 
             Physics = new Physics(this);
-            Physics.Thrust(8.5f);
+            Physics.Thrust(thrust);
             Components.Add(Physics);
 
             
@@ -45,6 +50,13 @@ namespace SuperTownDefense.Objects
 
             _ee = new ExplosionEmitter(this);
             Components.Add(_ee);
+
+            _se = new SmokeEmitter(this);
+            Components.Add(_se);
+
+            _explodesound = new Sound(this, StateRef.GameRef.Game.Content.Load<SoundEffect>(@"game/sounds/explosion"));
+            _explodesound.Volume = .5f;
+            Components.Add(_explodesound);
         }
 
         public override void Update()
@@ -54,7 +66,8 @@ namespace SuperTownDefense.Objects
             {
                 Physics.Velocity.Y += Gravity;
                 Body.Angle = (float) Math.Atan2(Physics.Velocity.X, -Physics.Velocity.Y);
-                if (Body.Position.Y > 500)
+                _se.Emit(1);
+                if (Body.Position.Y > 510)
                     _isexploding = true;
             }
             else if (_isexploding)
@@ -69,6 +82,12 @@ namespace SuperTownDefense.Objects
 
                     _explodeanim.Start();
                     _ee.Emit(20);
+
+                    _explodesound.Play();
+
+                    Collision.Update();
+                    Collision.NewPartners = new List<Entity>();
+                    Collision.Partners = new List<Entity>();
                 }
             }
         }
@@ -80,7 +99,7 @@ namespace SuperTownDefense.Objects
 
         public void CollisionHandler(Entity e)
         {
-            e.Destroy();
+            e.Health.Hurt(Damage);
         }
     }
 
@@ -117,6 +136,52 @@ namespace SuperTownDefense.Objects
         {
             base.Update();
             Physics.Velocity.Y += .1f;
+        }
+    }
+
+    class SmokeEmitter : Emitter
+    {
+        Random _rand = new Random(DateTime.Now.Millisecond);
+        private List<Color> Colors;
+ 
+        public SmokeEmitter(Entity e)
+            : base(e, e.StateRef.GameRef.Game.Content.Load<Texture2D>(@"game/explosionparticle"), Vector2.One * 5)
+        {
+            Colors = new List<Color>();
+            Colors.Add(Color.Gray);
+            Colors.Add(Color.DarkGray);
+            Colors.Add(Color.LightGray);
+            Colors.Add(Color.LightSlateGray);
+            Colors.Add(Color.SlateGray);
+        }
+
+        protected override Particle GenerateNewParticle()
+        {
+            int index = _rand.Next(0, 3);
+            int ttl = _rand.Next(40, 80);
+            //Rotate the point based on the center of the sprite
+            // p = unrotated point, o = rotation origin
+            //p'x = cos(theta) * (px-ox) - sin(theta) * (py-oy) + ox
+            //p'y = sin(theta) * (px-ox) + cos(theta) * (py-oy) + oy
+
+            var origin = Entity.Body.Position + Entity.Render.Origin * Entity.Render.Scale; 
+
+            var unrotatedposition = new Vector2(
+                Entity.Body.BoundingBox.X + Entity.Render.Origin.X * Entity.Render.Scale,
+                Entity.Body.BoundingBox.Bottom);
+            var angle = Entity.Body.Angle;
+
+            var position = new Vector2(
+                (float)(Math.Cos(angle) * (unrotatedposition.X - origin.X) - Math.Sin(angle) * (unrotatedposition.Y - origin.Y) + origin.X),
+                (float)(Math.Sin(angle) * (unrotatedposition.X - origin.X) + Math.Cos(angle) * (unrotatedposition.Y - origin.Y) + origin.Y)
+            );
+
+            FadeParticle p = new FadeParticle(index, position, 10, ttl, this);
+            p.Body.Angle = (float)_rand.NextDouble() / 2 - .25f;
+            p.Physics.Thrust((float)_rand.NextDouble() + .1f);
+            p.Render.Layer = .5f;
+            p.Render.Color = Colors[_rand.Next(0, Colors.Count)];
+            return p;
         }
     }
 }

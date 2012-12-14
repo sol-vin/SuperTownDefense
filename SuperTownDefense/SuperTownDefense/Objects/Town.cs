@@ -7,6 +7,7 @@ using EntityEngine.Data;
 using EntityEngine.Engine;
 using EntityEngine.Input;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SuperTownDefense.Objects.Components;
@@ -16,15 +17,12 @@ namespace SuperTownDefense.Objects
     public class Town : Entity
     {
         private DoubleInput _firekey = new DoubleInput(Keys.Enter, Buttons.A, PlayerIndex.One);
-        private DoubleInput _debugkey = new DoubleInput(Keys.P, Buttons.LeftShoulder, PlayerIndex.One);
-
         public Gun Gun;
-
         public Animation DeadCityAnim;
-
         public TileRender TileRender;
-
         public Cursor Cursor;
+
+        private Sound _fire;
 
         public Town(EntityState es) : base(es)
         {
@@ -43,6 +41,8 @@ namespace SuperTownDefense.Objects
             DeadCityAnim.Scale = 6.0f;
 
             Health = new Health(this, 100);
+            Health.HurtEvent += ChangeColor;
+
             TileRender.Index = 2;
             Components.Add(Health);
 
@@ -54,6 +54,9 @@ namespace SuperTownDefense.Objects
 
             Collision = new Collision(this);
             Components.Add(Collision);
+
+            _fire = new Sound(this, es.GameRef.Game.Content.Load<SoundEffect>(@"game/sounds/bombfire"));
+            Components.Add(_fire);
         }
 
         public override void Update()
@@ -61,7 +64,7 @@ namespace SuperTownDefense.Objects
             base.Update();
             if (Health.Alive)
             {
-                switch (Health.HitPoints)
+                switch ((int)Health.HitPoints)
                 {
                     case 70:
                         TileRender.Index = 1;
@@ -79,20 +82,22 @@ namespace SuperTownDefense.Objects
                 Components.Add(Render);
             }
 
-            if (Health.Alive && Cursor.Render.Color != Color.Red && _firekey.RapidFire(1500))
+            if (_firekey.RapidFire(1250) && Health.Alive && Cursor.Render.Color != Color.Red)
             {
                 Gun.Fire(Cursor.Angle);
-            }
-
-            if (_debugkey.Down())
-            {
-                Health.Hurt(1);
+                _fire.Play();
             }
         }
 
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
+            Render.Color = Color.White;
+        }
+
+        public void ChangeColor(Entity e = null)
+        {
+            Render.Color = Color.Red;
         }
 
     }

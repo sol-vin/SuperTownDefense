@@ -9,3 +9,8 @@ Content\game\explosion.xnb
 Content\game\explosionparticle.xnb
 Content\game\soldier.xnb
 Content\game\soldiergibs.xnb
+Content\game\helicopter.xnb
+Content\game\sounds\explosion.xnb
+Content\game\sounds\hit.xnb
+Content\game\sounds\bombfire.xnb
+Content\game\sounds\shoot.xnb

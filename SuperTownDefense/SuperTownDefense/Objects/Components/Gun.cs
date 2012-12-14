@@ -8,6 +8,8 @@ namespace SuperTownDefense.Objects.Components
 {
     public class Gun : Weapon
     {
+        public float Thrust = 8.5f;
+
         public Gun(Entity e) : base(e)
         {
             
@@ -15,7 +17,7 @@ namespace SuperTownDefense.Objects.Components
 
         public void Fire(float angle)
         {
-            Bomb b = new Bomb(Entity.StateRef, Entity.Body.Position + Entity.Render.Origin * Entity.Render.Scale, angle);
+            Bomb b = new Bomb(Entity.StateRef, Entity.Body.Position + Entity.Render.Origin * Entity.Render.Scale, angle, Thrust);
             b.Collision.NewPartners = Entity.Collision.Partners;
             Entity.AddEntity(b);
         }

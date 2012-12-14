@@ -49,7 +49,7 @@ namespace SuperTownDefense.Objects
         public override void Update()
         {
             base.Update();
-            float anglespeedmodifer = _quickaimkey.Down() ? 2 : 1;
+            float anglespeedmodifer = _quickaimkey.Down() ? 3 : 1;
 
             if (_aimleftkey.Down())
                 Angle -= .001f * anglespeedmodifer;
